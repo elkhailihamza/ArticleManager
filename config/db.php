@@ -7,15 +7,31 @@ use Dotenv\Dotenv;
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../resources');
 $dotenv->load();
 
-$host = $_ENV['DB_HOST'];
-$name = $_ENV['DB_name'];
-$dsn = "mysql:host=$host;dbname=$name";
-$user = $_ENV['DB_user'];
-$pass = $_ENV['DB_pass'];
+class database
+{
+    private $host;
+    private $user;
+    private $name;
+    private $pass;
 
-try {
-    $pdo = new PDO($dsn, $user, $pass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch(PDOException $e) {
-    echo "Connection Failed: " . $e->getMessage();
+    public function __construct()
+    {
+        $this->host = $_ENV['DB_HOST'];
+        $this->user = $_ENV['DB_user'];
+        $this->pass = $_ENV['DB_pass'];
+        $this->name = $_ENV['DB_name'];
+    }
+
+    protected function connexion()
+    {
+        try {
+            $dsn = "mysql:host=$this->host;dbname=$this->name";
+            $pdo = new PDO($dsn, $this->user, $this->pass);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            die("Connection Failed: " . $e);
+        }
+        return $pdo;
+    }
+
 }

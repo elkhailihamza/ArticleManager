@@ -7,6 +7,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <title>article</title>
+    <?php
+        require_once (__DIR__ . '/../config/db.php');
+    ?>
 </head>
 
 <body>
@@ -17,18 +20,18 @@
                     Create an article
                 </h2>
             </div>
-            <form action="" class="form-group d-flex flex-column justify-content-center gap-4">
+            <form action="./CRUD/form_valid.php" method="post" class="form-group d-flex flex-column justify-content-center gap-4">
                 <div class="form-floating">
-                    <input class="form-control" placeholder="Leave a comment here" maxlength="125"></input>
+                    <input class="form-control" placeholder="Enter a title here.." maxlength="125" name="title"></input>
                     <label>Title</label>
                 </div>
                 <div class="form-floating">
                     <textarea class="form-control" style="resize: none; height: 250px;"
-                        placeholder="Leave a comment here" maxlength="4200  "></textarea>
+                        placeholder="Enter article content here.." maxlength="4200" name="content"></textarea>
                     <label>Content</label>
                 </div>
                 <div class="container d-flex justify-content-center align-items-center">
-                    <button class="btn btn-primary px-4" style="width: 200px;" type="submit" value="Submit">Submit</button>
+                    <button class="btn btn-primary px-4" style="width: 200px;" type="submit" name="submit" value="Submit">Submit</button>
                 </div>
             </form>
         </div>

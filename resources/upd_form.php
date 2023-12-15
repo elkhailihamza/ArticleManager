@@ -9,10 +9,10 @@
     <title>article</title>
     <?php
         require_once (__DIR__ . '/../config/db.php');
-        require_once (__DIR__ . '/./CRUD/crud.php');
+        require_once (__DIR__ . '/../includes/CRUD/crud.php');
         $identifier = "update";
         $crud = new crud();
-        $crud->mapper($identifier);
+        $crud->checker($identifier);
         $id = $_POST['id'];
     ?>
 </head>

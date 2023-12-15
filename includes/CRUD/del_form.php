@@ -1,6 +1,6 @@
 <?php
 
-require_once (__DIR__ . '/./crud.php');
+require_once(__DIR__ . '/../../config/db.php');
 
 $id = $_POST['id'];
 

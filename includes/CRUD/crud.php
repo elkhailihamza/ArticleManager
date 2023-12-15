@@ -79,25 +79,29 @@ class crud extends database
         $stmt->bindParam(":upd", $id, PDO::PARAM_INT);
         $stmt->execute();
     }
-    public function mapper($identifier)
+    public function checker($identifier)
     {
         if (isset($_POST['submit'])) {
-            $this->title = $_POST['title'];
-            $this->content = $_POST['content'];
-            $this->id = $_POST['id'];
-            $this->user_id = 1;
+            $this->mapper($identifier);
+        }
+    }
+    public function mapper($identifier)
+    {
+        $this->title = $_POST['title'];
+        $this->content = $_POST['content'];
+        $this->id = $_POST['id'];
+        $this->user_id = 1;
 
-            if (!empty($this->title) && !empty($this->content)) {
-                if ($identifier == 'insert') {
-                    $this->addArticles($this->title, $this->content, $this->user_id);
-                    header("Location: __DIR__ . /../index.php");
-                } else if ($identifier == 'update') {
-                    $this->updArticles($this->title, $this->content, $this->id);
-                    header("Location: __DIR__ . /../index.php");
-                }
-            } else {
-                die("Enter text in the fields specified!");
+        if (!empty($this->title) && !empty($this->content)) {
+            if ($identifier == 'insert') {
+                $this->addArticles($this->title, $this->content, $this->user_id);
+                header("Location: __DIR__ . /../index.php");
+            } else if ($identifier == 'update') {
+                $this->updArticles($this->title, $this->content, $this->id);
+                header("Location: __DIR__ . /../index.php");
             }
+        } else {
+            die("Enter text in the fields specified!");
         }
     }
 }

@@ -10,9 +10,10 @@
     <?php
         require_once (__DIR__ . '/../config/db.php');
         require_once (__DIR__ . '/./CRUD/crud.php');
-        $identifier = "insert";
+        $identifier = "update";
         $crud = new crud();
         $crud->mapper($identifier);
+        $id = $_POST['id'];
     ?>
 </head>
 
@@ -21,7 +22,7 @@
         <div class="container col-6 d-grid gap-5">
             <div class="text-center">
                 <h2>
-                    Create an article
+                    Update article N°: <?= $id ?>
                 </h2>
             </div>
             <form action="" method="post" class="form-group d-flex flex-column justify-content-center gap-4">
@@ -34,8 +35,9 @@
                         placeholder="Enter article content here.." maxlength="4200" name="content"></textarea>
                     <label>Content</label>
                 </div>
+                <input type="hidden" value="<?= $id ?>" name="id">
                 <div class="container d-flex justify-content-center align-items-center">
-                    <button class="btn btn-primary px-4" style="width: 200px;" type="submit" name="submit" value="Submit">Submit</button>
+                    <button class="btn btn-success px-4" style="width: 200px;" type="submit" name="submit" value="Submit">Edit</button>
                 </div>
             </form>
         </div>

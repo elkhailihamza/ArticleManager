@@ -2,20 +2,12 @@
 
 require_once (__DIR__ . '/../config/db.php');
 require_once (__DIR__ . '/../includes/CRUD/crud.php');
+require(__DIR__ . "/../includes/header.php");
+require(__DIR__ . "/../includes/footer.php");
 
 $crud = new crud();
 $crud->getArticles();
+
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <title>index</title>
-</head>
-<body>
-    
-</body>
-</html>
+

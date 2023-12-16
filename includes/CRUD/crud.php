@@ -89,7 +89,6 @@ class crud extends database
     {
         $this->title = $_POST['title'];
         $this->content = $_POST['content'];
-        $this->id = $_POST['id'];
         $this->user_id = 1;
 
         if (!empty($this->title) && !empty($this->content)) {
@@ -97,6 +96,7 @@ class crud extends database
                 $this->addArticles($this->title, $this->content, $this->user_id);
                 header("Location: __DIR__ . /../index.php");
             } else if ($identifier == 'update') {
+                $this->id = $_POST['id'];
                 $this->updArticles($this->title, $this->content, $this->id);
                 header("Location: __DIR__ . /../index.php");
             }

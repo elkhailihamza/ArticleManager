@@ -9,6 +9,7 @@ class crud extends database
     private $content;
     private $user_id;
     private $id;
+    private $identifier;
     public function getArticles()
     {
         try {
@@ -27,13 +28,13 @@ class crud extends database
                     echo $row['contenu'] . "<br>";
                     ?>
                     <div class="d-flex gap-3 p-2">
-                        <form action='./CRUD/del_form.php' method='POST'>
+                        <form action='./../includes/CRUD/del_form.php' method='POST'>
                             <input type="hidden" value="<?= $row['Id'] ?>" name="id">
-                            <button class='btn btn-danger px-4' type='submit' value='Submit'>Delete</button>
+                            <button class='btn btn-danger px-4' type='submit' name="submit" value='Submit'>Delete</button>
                         </form>
                         <form action='./upd_form.php' method='POST'>
                             <input type="hidden" value="<?= $row['Id'] ?>" name="id">
-                            <button class='btn btn-success px-4' type='submit' value='Submit'>Edit</button>
+                            <button class='btn btn-success px-4' type='submit' name="submit" value='Submit'>Edit</button>
                         </form>
                     </div>
                     <?php
@@ -81,25 +82,25 @@ class crud extends database
     }
     public function checker($identifier)
     {
+        $this->identifier = $identifier;
         if (isset($_POST['submit'])) {
-            $this->mapper($identifier);
+            $this->mapper();
         }
     }
-    public function mapper($identifier)
+    public function mapper()
     {
         $this->title = $_POST['title'];
         $this->content = $_POST['content'];
         $this->user_id = 1;
 
         if (!empty($this->title) && !empty($this->content)) {
-            if ($identifier == 'insert') {
+            if ($this->identifier == 'insert') {
                 $this->addArticles($this->title, $this->content, $this->user_id);
-                header("Location: __DIR__ . /../index.php");
-            } else if ($identifier == 'update') {
+            } else if ($this->identifier == 'update') {
                 $this->id = $_POST['id'];
                 $this->updArticles($this->title, $this->content, $this->id);
-                header("Location: __DIR__ . /../index.php");
             }
+            header("Location: ./index.php");
         } else {
             die("Enter text in the fields specified!");
         }

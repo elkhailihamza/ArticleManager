@@ -42,10 +42,10 @@ include(__DIR__ . "/../includes/reg_header.php");
                 </div>
                 <div class="container d-grid">
                     <span>Already have an account? <a href="./login.php"> sign-in</a> now!</span>
-                    <span><a href="#">forgot password?</a></span>
+                    <span><a href="#" class="text-decoration-none">forgot password?</a></span>
                 </div>
                 <div class="container d-flex justify-content-center align-items-center mt-3">
-                    <button class="btn btn-primary" style="width: 150px;" type="submit" name="submit"
+                    <button class="btn btn-primary" style="width: 125px;" type="submit" name="submit"
                         value="Submit">Register</button>
                 </div>
             </div>

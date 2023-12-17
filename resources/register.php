@@ -2,7 +2,8 @@
 require_once(__DIR__ . "/../includes/CRUD/crud.php");
 include(__DIR__ . "/../includes/reg_header.php");
 $identifier = "register";
-$register = new auth();
+$session = new sessionManager();
+$register = new auth($session);
 $register->checker($identifier);
 ?>
 

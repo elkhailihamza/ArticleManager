@@ -2,6 +2,7 @@
 
 require_once(__DIR__ . '/../../config/db.php');
 
+
 class crud extends database
 {
     protected $sql;
@@ -106,6 +107,7 @@ class crud extends database
         }
     }
 }
+$session = new sessionManager();
 
 class auth extends crud
 {
@@ -115,7 +117,13 @@ class auth extends crud
     private $pass;
     private $email;
     private $role_id;
+    private $sessionManager;
 
+    public function __construct(sessionManager $sessionManager) {
+        parent::__construct();
+        $this->sessionManager = $sessionManager;
+    }
+    
     public function checker($identifier)
     {
         $this->identifier = $identifier;
@@ -148,7 +156,11 @@ class auth extends crud
         if (!empty($result)) {
             $row = $result;
             $hashedPass = $row['password'];
+            
             if (password_verify($this->pass, $hashedPass)) {
+                $this->sessionManager->startSession();
+                $this->sessionManager->setSession("role_id", $row['role_id']);
+                $this->sessionManager->setSession("userid", $row['id']);
                 return true;
             } else {
                 return false;
@@ -193,6 +205,12 @@ class auth extends crud
         }
     }
 
+    public function logout() {
+        $this->sessionManager->startSession();
+        $this->sessionManager->destroySession();
+        return true;
+    }
+
     public function mapper()
     {
         if ($this->identifier === 'login') {
@@ -207,8 +225,24 @@ class auth extends crud
             } else {
                 exit("Error");
             }
-        } else {
-            exit("error!");
         }
     }
 }
+
+class sessionManager {
+    public function startSession() {
+        session_start();
+    }
+    public function setSession($key, $value) {
+        $_SESSION[$key] = $value;
+    }
+    public function unsetSession($key) {
+        unset($_SESSION[$key]);
+    }
+    public function getSession($key) {
+        return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
+    }
+    public function destroySession() {
+        session_destroy();
+    }
+} 

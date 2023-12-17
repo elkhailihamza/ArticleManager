@@ -1,8 +1,10 @@
 <?php
-require_once(__DIR__ . "/../includes/CRUD/crud.php");
+require_once (__DIR__ . '/../config/db.php');
+require(__DIR__ . "/../includes/CRUD/crud.php");
 include(__DIR__ . "/../includes/reg_header.php");
 $identifier = "login";
-$login = new auth();
+$session = new sessionManager();
+$login = new auth($session);
 $login->checker($identifier);
 ?>
 

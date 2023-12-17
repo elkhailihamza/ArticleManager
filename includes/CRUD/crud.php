@@ -14,7 +14,10 @@ class crud extends database
     public function getArticles()
     {
         try {
-            $this->sql = "SELECT * FROM article ORDER BY date_de_creation DESC;";
+            $this->sql = "SELECT a.id, a.titre, a.contenu, a.date_de_creation, u.username, u.role_id
+            FROM article a
+            INNER JOIN utilisateur u ON a.user_id = u.id
+            ORDER BY a.date_de_creation DESC;";
             $stmt = $this->connexion()->prepare($this->sql);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -23,23 +26,45 @@ class crud extends database
                 echo "empty";
             } else {
                 foreach ($result as $row) {
-                    echo "Article " . $row['id'] . ":<hr style='width: 100px; margin-left: 0;'>";
-                    echo $row['titre'] . " - By User: " . $row['user_id'] . "<br>";
-                    echo $row['date_de_creation'] . "<br>";
-                    echo $row['contenu'] . "<br>";
                     ?>
-                    <div class="d-flex gap-3 p-2">
-                        <form action='./../includes/CRUD/del_form.php' method='POST'>
-                            <input type="hidden" value="<?= $row['id'] ?>" name="id">
-                            <button class='btn btn-danger px-4' type='submit' name="submit" value='Submit'>Delete</button>
-                        </form>
-                        <form action='./upd_form.php' method='POST'>
-                            <input type="hidden" value="<?= $row['id'] ?>" name="id">
-                            <button class='btn btn-success px-4' type='submit' name="submit" value='Submit'>Edit</button>
-                        </form>
-                    </div>
+                    <tr>
+                        <th scope="row">
+                            <?= $row['id'] ?>
+                        </th>
+                        <td>
+                            <?= $row['titre'] ?>
+                        </td>
+                        <td>
+                            <?= $row['contenu'] ?>
+                        </td>
+                        <td>
+                            <?= $row['date_de_creation'] ?>
+                        </td>
+                        <td>
+                            <?= $row['username'] ?>
+                        </td>
+                        <?php
+                        if ($row['role_id'] == 2) {
+                            ?>
+                    <th class="col-2" scope="col">Upd&Del</th>
+
+                            <td>
+                                <div class="d-flex justify-content-between">
+                                <form action='./../includes/CRUD/del_form.php' method='POST'>
+                                    <input type="hidden" value="<?= $row['id'] ?>" name="id">
+                                    <button class='btn btn-danger px-4' type='submit' name="submit" value='Submit'>Delete</button>
+                                </form>
+                                <form action='./upd_form.php' method='POST'>
+                                    <input type="hidden" value="<?= $row['id'] ?>" name="id">
+                                    <button class='btn btn-success px-4' type='submit' name="submit" value='Submit'>Edit</button>
+                                </form>
+                                </div>
+                            </td>
+                            <?php
+                        }
+                        ?>
+                    </tr>
                     <?php
-                    echo "<hr style='width: 400px;'>";
                 }
             }
         } catch (PDOException $e) {
@@ -119,11 +144,12 @@ class auth extends crud
     private $role_id;
     private $sessionManager;
 
-    public function __construct(sessionManager $sessionManager) {
+    public function __construct(sessionManager $sessionManager)
+    {
         parent::__construct();
         $this->sessionManager = $sessionManager;
     }
-    
+
     public function checker($identifier)
     {
         $this->identifier = $identifier;
@@ -156,7 +182,7 @@ class auth extends crud
         if (!empty($result)) {
             $row = $result;
             $hashedPass = $row['password'];
-            
+
             if (password_verify($this->pass, $hashedPass)) {
                 $this->sessionManager->startSession();
                 $this->sessionManager->setSession("role_id", $row['role_id']);
@@ -205,7 +231,8 @@ class auth extends crud
         }
     }
 
-    public function logout() {
+    public function logout()
+    {
         $this->sessionManager->startSession();
         $this->sessionManager->destroySession();
         return true;
@@ -214,13 +241,13 @@ class auth extends crud
     public function mapper()
     {
         if ($this->identifier === 'login') {
-            if($this->login()) {
+            if ($this->login()) {
                 header("Location: ./index.php");
             } else {
                 exit("Error");
             }
         } else if ($this->identifier === 'register') {
-            if($this->register()) {
+            if ($this->register()) {
                 header("Location: ./login.php");
             } else {
                 exit("Error");
@@ -229,20 +256,26 @@ class auth extends crud
     }
 }
 
-class sessionManager {
-    public function startSession() {
+class sessionManager
+{
+    public function startSession()
+    {
         session_start();
     }
-    public function setSession($key, $value) {
+    public function setSession($key, $value)
+    {
         $_SESSION[$key] = $value;
     }
-    public function unsetSession($key) {
+    public function unsetSession($key)
+    {
         unset($_SESSION[$key]);
     }
-    public function getSession($key) {
+    public function getSession($key)
+    {
         return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
     }
-    public function destroySession() {
+    public function destroySession()
+    {
         session_destroy();
     }
-} 
+}

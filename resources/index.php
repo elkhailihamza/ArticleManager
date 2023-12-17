@@ -11,8 +11,7 @@ if($session->getSession("userid") === null) {
     header("Location: ./login.php");
 }
 
-$crud = new crud();
-$crud->getArticles();
+
 
 include (__DIR__ . "/../includes/footer.php");
 ?>

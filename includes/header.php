@@ -28,7 +28,7 @@
             <a class="nav-link active" aria-current="page" href="index.php">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">View</a>
+            <a class="nav-link" href="./view.php">View</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="./form.php">Create</a>
@@ -45,8 +45,8 @@
                 </svg>
               </a>
               <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
-                <li><a class="dropdown-item" href="#">Login</a></li>
-                <li><a class="dropdown-item" href="#">Register</a></li>
+                <li><a class="dropdown-item" href="#">Profile</a></li>
+                <li><a class="dropdown-item" href="#">Settings</a></li>
                 <li>
                   <hr class="dropdown-divider">
                 </li>

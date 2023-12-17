@@ -1,5 +1,9 @@
 <?php
+require_once(__DIR__ . "/../includes/CRUD/crud.php");
 include(__DIR__ . "/../includes/reg_header.php");
+$identifier = "login";
+$login = new auth();
+$login->checker($identifier);
 ?>
 
 <main class="container-fluid d-flex flex-column justify-content-center align-items-center">
@@ -17,7 +21,8 @@ include(__DIR__ . "/../includes/reg_header.php");
                     <label>Email</label>
                 </div>
                 <div class="form-floating">
-                    <input class="form-control" type="password" placeholder="Enter user password.." name="password" maxlength="125" required>
+                    <input class="form-control" type="password" placeholder="Enter user password.." name="pass"
+                        maxlength="125" required>
                     <label>Password</label>
                 </div>
                 <div class="container d-grid">

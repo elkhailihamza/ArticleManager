@@ -4,12 +4,12 @@ require_once(__DIR__ . '/../../config/db.php');
 
 class crud extends database
 {
-    private $sql;
+    protected $sql;
     private $title;
     private $content;
     private $user_id;
     private $id;
-    private $identifier;
+    protected $identifier;
     public function getArticles()
     {
         try {
@@ -22,18 +22,18 @@ class crud extends database
                 echo "empty";
             } else {
                 foreach ($result as $row) {
-                    echo "Article " . $row['Id'] . ":<hr style='width: 100px; margin-left: 0;'>";
+                    echo "Article " . $row['id'] . ":<hr style='width: 100px; margin-left: 0;'>";
                     echo $row['titre'] . " - By User: " . $row['user_id'] . "<br>";
                     echo $row['date_de_creation'] . "<br>";
                     echo $row['contenu'] . "<br>";
                     ?>
                     <div class="d-flex gap-3 p-2">
                         <form action='./../includes/CRUD/del_form.php' method='POST'>
-                            <input type="hidden" value="<?= $row['Id'] ?>" name="id">
+                            <input type="hidden" value="<?= $row['id'] ?>" name="id">
                             <button class='btn btn-danger px-4' type='submit' name="submit" value='Submit'>Delete</button>
                         </form>
                         <form action='./upd_form.php' method='POST'>
-                            <input type="hidden" value="<?= $row['Id'] ?>" name="id">
+                            <input type="hidden" value="<?= $row['id'] ?>" name="id">
                             <button class='btn btn-success px-4' type='submit' name="submit" value='Submit'>Edit</button>
                         </form>
                     </div>
@@ -62,7 +62,7 @@ class crud extends database
 
     public function delArticles($id)
     {
-        $this->sql = "DELETE FROM article WHERE Id = :del;";
+        $this->sql = "DELETE FROM article WHERE id = :del;";
         $stmt = $this->connexion()->prepare($this->sql);
         $stmt->bindParam(":del", $id, PDO::PARAM_INT);
 
@@ -73,7 +73,7 @@ class crud extends database
 
     public function updArticles($title, $content, $id)
     {
-        $this->sql = "UPDATE `article` SET `titre`= :title  ,`contenu`= :content WHERE Id = :upd";
+        $this->sql = "UPDATE `article` SET `titre`= :title  ,`contenu`= :content WHERE id = :upd";
         $stmt = $this->connexion()->prepare($this->sql);
         $stmt->bindParam(":title", $title, PDO::PARAM_STR);
         $stmt->bindParam(":content", $content, PDO::PARAM_STR);
@@ -103,6 +103,112 @@ class crud extends database
             header("Location: ./index.php");
         } else {
             die("Enter text in the fields specified!");
+        }
+    }
+}
+
+class auth extends crud
+{
+    private $fname;
+    private $lname;
+    private $uname;
+    private $pass;
+    private $email;
+    private $role_id;
+
+    public function checker($identifier)
+    {
+        $this->identifier = $identifier;
+        if (isset($_POST['submit'])) {
+            $this->mapper();
+        }
+    }
+
+    public function emailExists()
+    {
+        $this->sql = "SELECT * FROM utilisateur WHERE email = ?;";
+        $stmt = $this->connexion()->prepare($this->sql);
+
+        $stmt->bindParam(1, $this->email, PDO::PARAM_STR);
+
+        $stmt->execute();
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $result;
+    }
+
+    public function login()
+    {
+        $this->email = $_POST['email'];
+        $this->pass = $_POST['pass'];
+
+        $result = $this->emailExists();
+
+        if (!empty($result)) {
+            $row = $result;
+            $hashedPass = $row['password'];
+            if (password_verify($this->pass, $hashedPass)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public function register()
+    {
+
+        $this->email = $_POST['email'];
+
+        $result = $this->emailExists();
+
+        if (!empty($result)) {
+            exit("Email already in use!");
+        } else {
+            $this->fname = $_POST['fname'];
+            $this->lname = $_POST['lname'];
+            $this->uname = $_POST['uname'];
+            $this->pass = $_POST['pass'];
+
+            $hashedPass = password_hash($this->pass, PASSWORD_DEFAULT);
+
+            $this->role_id = 1;
+
+            $this->sql = "INSERT INTO `utilisateur`(`firstname`, `lastname`, `username`, `password`, `email`, `role_id`) VALUES (:fname,:lname,:uname,:pass,:email,:role_id);";
+            $stmt = $this->connexion()->prepare($this->sql);
+
+            $stmt->bindParam(":fname", $this->fname, PDO::PARAM_STR);
+            $stmt->bindParam(":lname", $this->lname, PDO::PARAM_STR);
+            $stmt->bindParam(":uname", $this->uname, PDO::PARAM_STR);
+            $stmt->bindParam(":pass", $hashedPass, PDO::PARAM_STR);
+            $stmt->bindParam(":email", $this->email, PDO::PARAM_STR);
+            $stmt->bindParam(":role_id", $this->role_id, PDO::PARAM_INT);
+
+            if ($stmt->execute()) {
+                header("Location: ./login.php");
+            }
+        }
+    }
+
+    public function mapper()
+    {
+        if ($this->identifier === 'login') {
+            if($this->login()) {
+                header("Location: ./index.php");
+            } else {
+                exit("Error");
+            }
+        } else if ($this->identifier === 'register') {
+            if($this->register()) {
+                header("Location: ./login.php");
+            } else {
+                exit("Error");
+            }
+        } else {
+            exit("error!");
         }
     }
 }

@@ -1,5 +1,9 @@
 <?php
+require_once(__DIR__ . "/../includes/CRUD/crud.php");
 include(__DIR__ . "/../includes/reg_header.php");
+$identifier = "register";
+$register = new auth();
+$register->checker($identifier);
 ?>
 
 <main class="container-fluid d-flex flex-column justify-content-center align-items-center">
@@ -31,7 +35,7 @@ include(__DIR__ . "/../includes/reg_header.php");
                     </div>
                     <div class="form-floating">
                         <input class="form-control" type="password" placeholder="Enter user password.." maxlength="125"
-                            name="password" required>
+                            name="pass" required>
                         <label>Password</label>
                     </div>
                 </div>

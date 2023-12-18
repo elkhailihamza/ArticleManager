@@ -1,10 +1,11 @@
 <?php
 
-require_once(__DIR__ . '/../../config/db.php');
+require_once(__DIR__ . '/./crud.php');
 
 $id = $_POST['id'];
+$session = new sessionManager();
 
-$del = new crud();
+$del = new crud($session);
 if($del->delArticles($id)) {
-    header("Location: __DIR__ . /../../index.php");
+    header("Location: ../../resources/view.php");
 }

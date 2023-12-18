@@ -14,7 +14,7 @@
 
 3. **Inheritance**
 
-- Inheritance allows you to fetch the properties of a parent class, from a child class.
+- Inheritance allows you to inherit or fetch the properties of a parent class, from a child class.
 
 4. **Polymorphism**
 

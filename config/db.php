@@ -25,7 +25,7 @@ class database
     protected function connexion()
     {
         try {
-            $dsn = "mysql:host=$this->host;dbname=$this->name";
+            $dsn = "mysql:host=$this->host;dbname=$this->name;charset=utf8";
             $pdo = new PDO($dsn, $this->user, $this->pass);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {

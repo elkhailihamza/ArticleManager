@@ -2,10 +2,11 @@
 include(__DIR__ . "/../includes/header.php");
 
 $identifier = "insert";
+
 $crudObj->checker($identifier);
 ?>
 
-<main class="container-fluid d-flex flex-column justify-content-center align-items-center" style="height: 90vh;">
+<main class="container-fluid d-flex flex-column justify-content-center align-items-center" style="height: 80vh;">
     <div class="container col-6 d-grid gap-5">
         <div class="text-center">
             <h2>

@@ -1,14 +1,17 @@
 <?php
-
-include(__DIR__ . "/../includes/header.php");
-
+require_once(__DIR__ . "/../includes/header.php");
 $identifier = "update";
-$sessionObj->setSession("id", $_POST['id']);
+
+if (isset($_POST['id'])) {
+    $sessionObj->setSession("id", $_POST['id']);
+} else {
+    exit("select article first!");
+}
+
 $id = $sessionObj->getSession("id");
 $crudObj->checker($identifier);
 ?>
-
-<main class="container-fluid d-flex flex-column justify-content-center align-items-center" style="height: 100vh;">
+<main class="container-fluid d-flex flex-column justify-content-center align-items-center" style="height: 80vh;">
     <div class="container col-6 d-grid gap-5">
         <div class="text-center">
             <h2>
@@ -35,3 +38,4 @@ $crudObj->checker($identifier);
 </main>
 <?php
 include(__DIR__ . "/../includes/footer.php");
+?>

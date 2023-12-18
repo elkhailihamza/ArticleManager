@@ -14,11 +14,12 @@
 
   $sessionObj = new sessionManager();
   $sessionObj->startSession();
-  $crudObj = new crud($sessionObj);
 
-  if ($sessionObj->getSession("userid") === null) {
+  if ($sessionObj->getSession("role_id") === null) {
     header("Location: ./login.php");
   }
+
+  $crudObj = new crud($sessionObj);
   ?>
 </head>
 
@@ -43,21 +44,15 @@
           <li class="nav-item">
             <a class="nav-link" href="./view.php">View</a>
           </li>
+          <li class="nav-item">
           <?php
           if ($sessionObj->getSession("role_id") == 2) {
-            ?>
-            <li class="nav-item">
-              <a class="nav-link" href="./form.php">Create</a>
-            </li>
-            <?php
+              echo "<a class='nav-link' href='./form.php'>Create</a>";
           } else if ($sessionObj->getSession("role_id") == 1) {
-            ?>
-            <li class="nav-item">
-              <p class="nav-link" style="color: black;">unavailable!</p>
-            </li>
-            <?php
+              echo "<p class='nav-link' style='color: black;'>unavailable!</p>";
           }
           ?>
+          </li>
           <li class="nav-item">
             <div class="dropdown">
               <a class="btn px-3" style="padding-bottom: 6px;" type="button" id="dropdownMenuButton1"

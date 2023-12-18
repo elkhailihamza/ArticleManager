@@ -145,9 +145,9 @@ class crud extends database
         $stmt = $this->connexion()->prepare($this->sql);
         $stmt->bindParam(":del", $id, PDO::PARAM_INT);
 
-        $stmt->execute();
-
-        return true;
+        if ($stmt->execute()) {
+            return true;
+        }
     }
 
     public function updArticles($title, $content, $id)
@@ -157,35 +157,51 @@ class crud extends database
         $stmt->bindParam(":title", $title, PDO::PARAM_STR);
         $stmt->bindParam(":content", $content, PDO::PARAM_STR);
         $stmt->bindParam(":upd", $id, PDO::PARAM_INT);
-        $stmt->execute();
+        if($stmt->execute()) {
+            return true;
+        }
     }
     public function checker($identifier)
     {
         $this->identifier = $identifier;
         if (isset($_POST['submit'])) {
-            $this->mapper();
+            if ($this->mapper()) {
+                echo '<script type="text/javascript">window.location.href="./view.php";</script>';
+                exit();
+            }
+        }
+        if ($this->sessionManager->getSession("role_id") == 1) {
+            if($this->sessionManager->getSession("isAdmin") == false && ($identifier == "update" || $identifier == "insert")) {
+                echo '<script type="text/javascript">window.location.href="./index.php";</script>';
+                exit();
+            } else if ($this->sessionManager->getSession("isAdmin") == true && $identifier == "insert") {
+                echo '<script type="text/javascript">window.location.href="./index.php";</script>';
+                exit();
+            }
         }
     }
     public function mapper()
     {
         $this->user_id = $this->sessionManager->getSession("userid");
         $this->id = $this->sessionManager->getSession("id");
-
         if (isset($_POST['title']) && isset($_POST['content'])) {
             $this->title = $_POST['title'];
             $this->content = $_POST['content'];
             if (!empty($this->title) && !empty($this->content)) {
                 if ($this->identifier == 'insert') {
-                    $this->addArticles($this->title, $this->content, $this->user_id);
-                    
+                    if ($this->addArticles($this->title, $this->content, $this->user_id)) {
+                        return true;
+                    }
                 } else if ($this->identifier == 'update') {
-                    $this->updArticles($this->title, $this->content, $this->id);
+                    if ($this->updArticles($this->title, $this->content, $this->id)) {
+                        return true;
+                    }
                 }
             } else {
-                die("Enter text in the fields specified!");
+                return false;
             }
         } else {
-            die("Title and/or content not set in the form!");
+            return false;
         }
     }
 }

@@ -6,9 +6,9 @@ if($sessionObj->getSession("userid") === null) {
     header("Location: ./login.php");
 }
 ?>
-<div class="container text-center">
+<div class="container d-flex flex-column justify-content-center align-items-center" style="height: 60vh;">
     <h2>Welcome, <?= $sessionObj->getSession("uname") ?></h2>
-    <hr>
+    <hr class="col-4">
 </div>
 <?php
 

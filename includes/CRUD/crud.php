@@ -51,26 +51,68 @@ class crud extends database
                         </td>
                         <?php
                         if ($this->sessionManager->getSession("role_id") == 2) {
-                            ?>
-                            <td>
-                                <div class="d-flex justify-content-between">
-                                    <form action='./../includes/CRUD/del_form.php' method='POST'>
-                                        <input type="hidden" value="<?= $row['id'] ?>" name="id">
-                                        <button class='btn btn-danger px-4' type="submit">Delete</button>
-                                    </form>
-                                    <form action='./upd_form.php' method='POST'>
-                                        <input type="hidden" value="<?= $row['id'] ?>" name="id">
-                                        <button class='btn btn-success px-4' type="submit">Edit</button>
-                                    </form>
-                                </div>
-                            </td>
-                            <?php
-                        } else if ($this->sessionManager->getSession("role_id") == 1) {
-                            ?>
+                            if ($this->sessionManager->getSession("isAdmin")) {
+                                ?>
                                 <td>
-                                    <p>unavailable!</p>
+                                    <div class="d-flex justify-content-between">
+                                        <form action='./../includes/CRUD/del_form.php' method='POST'>
+                                            <input type="hidden" value="<?= $row['id'] ?>" name="id">
+                                            <button class='btn btn-danger px-4' type="submit">Delete</button>
+                                        </form>
+                                        <form action='./upd_form.php' method='POST'>
+                                            <input type="hidden" value="<?= $row['id'] ?>" name="id">
+                                            <button class='btn btn-success px-4' type="submit">Edit</button>
+                                        </form>
+                                    </div>
                                 </td>
-                            <?php
+                                <?php
+                            } else {
+                                if ($row['username'] === $this->sessionManager->getSession("uname")) {
+                                    ?>
+                                    <td>
+                                        <div class="d-flex justify-content-between">
+                                            <form action='./../includes/CRUD/del_form.php' method='POST'>
+                                                <input type="hidden" value="<?= $row['id'] ?>" name="id">
+                                                <button class='btn btn-danger px-4' type="submit">Delete</button>
+                                            </form>
+                                            <form action='./upd_form.php' method='POST'>
+                                                <input type="hidden" value="<?= $row['id'] ?>" name="id">
+                                                <button class='btn btn-success px-4' type="submit">Edit</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                    <?php
+                                } else {
+                                    ?>
+                                    <td>
+                                        <p>unavailable!</p>
+                                    </td>
+                                    <?php
+                                }
+                            }
+                        } else if ($this->sessionManager->getSession("role_id") == 1) {
+                            if ($this->sessionManager->getSession("isAdmin")) {
+                                ?>
+                                    <td>
+                                        <div class="d-flex justify-content-between">
+                                            <form action='./../includes/CRUD/del_form.php' method='POST'>
+                                                <input type="hidden" value="<?= $row['id'] ?>" name="id">
+                                                <button class='btn btn-danger px-4' type="submit">Delete</button>
+                                            </form>
+                                            <form action='./upd_form.php' method='POST'>
+                                                <input type="hidden" value="<?= $row['id'] ?>" name="id">
+                                                <button class='btn btn-success px-4' type="submit">Edit</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                <?php
+                            } else {
+                                ?>
+                                    <td>
+                                        <p>unavailable!</p>
+                                    </td>
+                                <?php
+                            }
                         }
                         ?>
                     </tr>
@@ -92,8 +134,9 @@ class crud extends database
         $stmt->bindParam(":contenu", $content, PDO::PARAM_STR);
         $stmt->bindParam(":user_id", $user_id, PDO::PARAM_INT);
 
-        $stmt->execute();
-
+        if($stmt->execute()) {
+            return true;
+        }
     }
 
     public function delArticles($id)
@@ -134,10 +177,10 @@ class crud extends database
             if (!empty($this->title) && !empty($this->content)) {
                 if ($this->identifier == 'insert') {
                     $this->addArticles($this->title, $this->content, $this->user_id);
+                    
                 } else if ($this->identifier == 'update') {
                     $this->updArticles($this->title, $this->content, $this->id);
                 }
-                header("Location: ./view.php");
             } else {
                 die("Enter text in the fields specified!");
             }
@@ -145,7 +188,6 @@ class crud extends database
             die("Title and/or content not set in the form!");
         }
     }
-
 }
 
 class auth extends crud
@@ -159,10 +201,24 @@ class auth extends crud
 
     public function emailExists()
     {
-        $this->sql = "SELECT * FROM utilisateur WHERE email = ?;";
+        $this->sql = "SELECT * FROM utilisateur WHERE email = :email;";
         $stmt = $this->connexion()->prepare($this->sql);
 
-        $stmt->bindParam(1, $this->email, PDO::PARAM_STR);
+        $stmt->bindParam(":email", $this->email, PDO::PARAM_STR);
+
+        $stmt->execute();
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $result;
+    }
+
+    public function usernameExists()
+    {
+        $this->sql = "SELECT * FROM utilisateur WHERE username = :uname;";
+        $stmt = $this->connexion()->prepare($this->sql);
+
+        $stmt->bindParam(":uname", $this->uname, PDO::PARAM_STR);
 
         $stmt->execute();
 
@@ -179,10 +235,10 @@ class auth extends crud
         $result = $this->emailExists();
 
         if (!empty($result)) {
+
             $row = $result;
             $hashedPass = $row['password'];
-
-            echo $row['password'];
+            
             if (password_verify($this->pass, $hashedPass)) {
                 $this->sessionManager->startSession();
                 $this->sessionManager->setSession("userid", $row['id']);
@@ -199,7 +255,7 @@ class auth extends crud
                 $stmt->execute();
                 $result = $stmt->fetch();
 
-                if(!empty($result)) {
+                if (!empty($result)) {
                     $this->sessionManager->setSession("isAdmin", true);
                 } else {
                     $this->sessionManager->setSession("isAdmin", false);
@@ -217,12 +273,17 @@ class auth extends crud
     {
 
         $this->email = $_POST['email'];
+        $this->uname = $_POST['uname'];
 
-        $result = $this->emailExists();
+        $rs = $this->emailExists();
+        $rs_data = $this->usernameExists();
 
-        if (!empty($result)) {
+        if (!empty($rs)) {
             exit("Email already in use!");
+        } else if(!empty($rs_data)) {
+            exit("username already in use!");
         } else {
+
             $this->fname = $_POST['fname'];
             $this->lname = $_POST['lname'];
             $this->uname = $_POST['uname'];

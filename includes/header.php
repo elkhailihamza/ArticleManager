@@ -50,7 +50,7 @@
               <a class="nav-link" href="./form.php">Create</a>
             </li>
             <?php
-          } else {
+          } else if ($sessionObj->getSession("role_id") == 1) {
             ?>
             <li class="nav-item">
               <p class="nav-link" style="color: black;">unavailable!</p>

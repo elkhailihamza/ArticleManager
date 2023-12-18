@@ -214,7 +214,7 @@ class auth extends crud
 
             $hashedPass = password_hash($this->pass, PASSWORD_DEFAULT);
 
-            $this->role_id = 2;
+            $this->role_id = 1;
 
             $this->sql = "INSERT INTO `utilisateur`(`firstname`, `lastname`, `username`, `password`, `email`, `role_id`) VALUES (:fname,:lname,:uname,:pass,:email,:role_id);";
             $stmt = $this->connexion()->prepare($this->sql);

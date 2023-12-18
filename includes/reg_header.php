@@ -8,6 +8,11 @@
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link rel="stylesheet" href="./css/styles.css" />
     <link rel="stylesheet" href="../includes/css/styles.css" />
+    <?php
+        require_once(__DIR__ . "/../includes/CRUD/crud.php");
+        $session = new sessionManager();
+        $auth = new auth($session);
+    ?>
 </head>
 
 <body>

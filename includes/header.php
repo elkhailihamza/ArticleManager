@@ -8,6 +8,14 @@
     integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
   <link rel="stylesheet" src="./css/styles.css" />
   <link rel="stylesheet" src="../includes/css/styles.css" />
+  <?php
+  require_once(__DIR__ . '/../config/db.php');
+  require_once(__DIR__ . '/./CRUD/crud.php');
+
+  $sessionObj = new sessionManager();
+  $sessionObj->startSession();
+  $crudObj = new crud($sessionObj);
+  ?>
 </head>
 
 <body>
@@ -19,7 +27,8 @@
             stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8l-6-6z" />
             <path d="M14 3v5h5M16 13H8M16 17H8M10 9H8" />
-          </svg><span>You<span class="p-0" style="color: #020887; font-family: 'Allerta Stencil', sans-serif;">Article</span></span>
+          </svg><span>You<span class="p-0"
+              style="color: #020887; font-family: 'Allerta Stencil', sans-serif;">Article</span></span>
         </a>
       </div>
       <div>
@@ -30,9 +39,21 @@
           <li class="nav-item">
             <a class="nav-link" href="./view.php">View</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="./form.php">Create</a>
-          </li>
+          <?php
+          if ($sessionObj->getSession("role_id") == 2) {
+            ?>
+            <li class="nav-item">
+              <a class="nav-link" href="./form.php">Create</a>
+            </li>
+            <?php
+          } else {
+            ?>
+            <li class="nav-item">
+              <p class="nav-link" style="color: black;">unavailable!</p>
+            </li>
+            <?php
+          }
+          ?>
           <li class="nav-item">
             <div class="dropdown">
               <a class="btn px-3" style="padding-bottom: 6px;" type="button" id="dropdownMenuButton1"

@@ -1,12 +1,11 @@
 <?php
-require_once(__DIR__ . '/../config/db.php');
-require_once(__DIR__ . '/../includes/CRUD/crud.php');
+
 include(__DIR__ . "/../includes/header.php");
 
 $identifier = "update";
-$crud = new crud();
-$crud->checker($identifier);
-$id = $_POST['id'];
+$sessionObj->setSession("id", $_POST['id']);
+$id = $sessionObj->getSession("id");
+$crudObj->checker($identifier);
 ?>
 
 <main class="container-fluid d-flex flex-column justify-content-center align-items-center" style="height: 100vh;">
@@ -29,8 +28,7 @@ $id = $_POST['id'];
             </div>
             <input type="hidden" value="<?= $id ?>" name="id">
             <div class="container d-flex justify-content-center align-items-center">
-                <button class="btn btn-success px-4" style="width: 200px;" type="submit" name="submit"
-                    value="Submit">Edit</button>
+                <button class="btn btn-success px-4" style="width: 200px;" type="submit" name="submit">Edit</button>
             </div>
         </form>
     </div>

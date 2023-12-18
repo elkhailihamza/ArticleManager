@@ -1,10 +1,7 @@
 <?php
-require_once(__DIR__ . "/../includes/CRUD/crud.php");
 include(__DIR__ . "/../includes/reg_header.php");
 $identifier = "register";
-$session = new sessionManager();
-$register = new auth($session);
-$register->checker($identifier);
+$auth->checker($identifier);
 ?>
 
 <main class="container-fluid d-flex flex-column justify-content-center align-items-center">
@@ -50,8 +47,7 @@ $register->checker($identifier);
                     <span><a href="#" class="text-decoration-none">forgot password?</a></span>
                 </div>
                 <div class="container d-flex justify-content-center align-items-center mt-3">
-                    <button class="btn btn-primary" style="width: 125px;" type="submit" name="submit"
-                        value="Submit">Register</button>
+                    <button class="btn btn-primary" style="width: 125px;" type="submit" name="submit">Register</button>
                 </div>
             </div>
         </form>

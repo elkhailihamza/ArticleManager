@@ -1,11 +1,7 @@
 <?php
-require_once (__DIR__ . '/../config/db.php');
-require(__DIR__ . "/../includes/CRUD/crud.php");
 include(__DIR__ . "/../includes/reg_header.php");
 $identifier = "login";
-$session = new sessionManager();
-$login = new auth($session);
-$login->checker($identifier);
+$auth->checker($identifier);
 ?>
 
 <main class="container-fluid d-flex flex-column justify-content-center align-items-center">
@@ -32,8 +28,7 @@ $login->checker($identifier);
                     <span><a href="#" class="text-decoration-none">forgot password?</a></span>
                 </div>
                 <div class="container d-flex justify-content-center align-items-center mt-5">
-                    <button class="btn btn-primary" style="width: 125px;" type="submit" name="submit"
-                        value="Submit">Login</button>
+                    <button class="btn btn-primary" style="width: 125px;" type="submit" name="submit">Login</button>
                 </div>
             </div>
         </form>

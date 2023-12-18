@@ -1,14 +1,11 @@
 <?php
-require_once(__DIR__ . '/../config/db.php');
-require_once(__DIR__ . '/../includes/CRUD/crud.php');
 include(__DIR__ . "/../includes/header.php");
 
 $identifier = "insert";
-$crud = new crud();
-$crud->checker($identifier);
+$crudObj->checker($identifier);
 ?>
 
-<main class="container-fluid d-flex flex-column justify-content-center align-items-center" style="height: 95vh;">
+<main class="container-fluid d-flex flex-column justify-content-center align-items-center" style="height: 90vh;">
     <div class="container col-6 d-grid gap-5">
         <div class="text-center">
             <h2>
@@ -26,8 +23,7 @@ $crud->checker($identifier);
                 <label>Content</label>
             </div>
             <div class="container d-flex justify-content-center align-items-center">
-                <button class="btn btn-primary px-4" style="width: 200px;" type="submit" name="submit"
-                    value="Submit">Submit</button>
+                <button class="btn btn-primary px-4" style="width: 200px;" type="submit" name="submit">Submit</button>
             </div>
         </form>
     </div>

@@ -11,6 +11,12 @@ class crud extends database
     private $user_id;
     private $id;
     protected $identifier;
+    protected $sessionManager;
+    public function __construct(sessionManager $sessionManager)
+    {
+        parent::__construct();
+        $this->sessionManager = $sessionManager;
+    }
     public function getArticles()
     {
         try {
@@ -44,22 +50,26 @@ class crud extends database
                             <?= $row['username'] ?>
                         </td>
                         <?php
-                        if ($row['role_id'] == 2) {
+                        if ($this->sessionManager->getSession("role_id") == 2) {
                             ?>
-                    <th class="col-2" scope="col">Upd&Del</th>
-
                             <td>
                                 <div class="d-flex justify-content-between">
-                                <form action='./../includes/CRUD/del_form.php' method='POST'>
-                                    <input type="hidden" value="<?= $row['id'] ?>" name="id">
-                                    <button class='btn btn-danger px-4' type='submit' name="submit" value='Submit'>Delete</button>
-                                </form>
-                                <form action='./upd_form.php' method='POST'>
-                                    <input type="hidden" value="<?= $row['id'] ?>" name="id">
-                                    <button class='btn btn-success px-4' type='submit' name="submit" value='Submit'>Edit</button>
-                                </form>
+                                    <form action='./../includes/CRUD/del_form.php' method='POST'>
+                                        <input type="hidden" value="<?= $row['id'] ?>" name="id">
+                                        <button class='btn btn-danger px-4' type="submit">Delete</button>
+                                    </form>
+                                    <form action='./upd_form.php' method='POST'>
+                                        <input type="hidden" value="<?= $row['id'] ?>" name="id">
+                                        <button class='btn btn-success px-4' type="submit">Edit</button>
+                                    </form>
                                 </div>
                             </td>
+                            <?php
+                        } else if ($this->sessionManager->getSession("role_id") == 1) {
+                            ?>
+                                <td>
+                                    <p>unavailable!</p>
+                                </td>
                             <?php
                         }
                         ?>
@@ -115,24 +125,28 @@ class crud extends database
     }
     public function mapper()
     {
-        $this->title = $_POST['title'];
-        $this->content = $_POST['content'];
-        $this->user_id = 1;
+        $this->user_id = $this->sessionManager->getSession("userid");
+        $this->id = $this->sessionManager->getSession("id");
 
-        if (!empty($this->title) && !empty($this->content)) {
-            if ($this->identifier == 'insert') {
-                $this->addArticles($this->title, $this->content, $this->user_id);
-            } else if ($this->identifier == 'update') {
-                $this->id = $_POST['id'];
-                $this->updArticles($this->title, $this->content, $this->id);
+        if (isset($_POST['title']) && isset($_POST['content'])) {
+            $this->title = $_POST['title'];
+            $this->content = $_POST['content'];
+            if (!empty($this->title) && !empty($this->content)) {
+                if ($this->identifier == 'insert') {
+                    $this->addArticles($this->title, $this->content, $this->user_id);
+                } else if ($this->identifier == 'update') {
+                    $this->updArticles($this->title, $this->content, $this->id);
+                }
+                header("Location: ./view.php");
+            } else {
+                die("Enter text in the fields specified!");
             }
-            header("Location: ./index.php");
         } else {
-            die("Enter text in the fields specified!");
+            die("Title and/or content not set in the form!");
         }
     }
+
 }
-$session = new sessionManager();
 
 class auth extends crud
 {
@@ -142,21 +156,6 @@ class auth extends crud
     private $pass;
     private $email;
     private $role_id;
-    private $sessionManager;
-
-    public function __construct(sessionManager $sessionManager)
-    {
-        parent::__construct();
-        $this->sessionManager = $sessionManager;
-    }
-
-    public function checker($identifier)
-    {
-        $this->identifier = $identifier;
-        if (isset($_POST['submit'])) {
-            $this->mapper();
-        }
-    }
 
     public function emailExists()
     {
@@ -183,8 +182,10 @@ class auth extends crud
             $row = $result;
             $hashedPass = $row['password'];
 
+            echo $row['password'];
             if (password_verify($this->pass, $hashedPass)) {
                 $this->sessionManager->startSession();
+                $this->sessionManager->setSession("uname", $row['username']);
                 $this->sessionManager->setSession("role_id", $row['role_id']);
                 $this->sessionManager->setSession("userid", $row['id']);
                 return true;
@@ -213,7 +214,7 @@ class auth extends crud
 
             $hashedPass = password_hash($this->pass, PASSWORD_DEFAULT);
 
-            $this->role_id = 1;
+            $this->role_id = 2;
 
             $this->sql = "INSERT INTO `utilisateur`(`firstname`, `lastname`, `username`, `password`, `email`, `role_id`) VALUES (:fname,:lname,:uname,:pass,:email,:role_id);";
             $stmt = $this->connexion()->prepare($this->sql);
@@ -230,12 +231,16 @@ class auth extends crud
             }
         }
     }
-
     public function logout()
     {
         $this->sessionManager->startSession();
         $this->sessionManager->destroySession();
         return true;
+    }
+
+    public function checker($identifier)
+    {
+        parent::checker($identifier);
     }
 
     public function mapper()

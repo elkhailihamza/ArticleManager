@@ -185,9 +185,25 @@ class auth extends crud
             echo $row['password'];
             if (password_verify($this->pass, $hashedPass)) {
                 $this->sessionManager->startSession();
-                $this->sessionManager->setSession("uname", $row['username']);
-                $this->sessionManager->setSession("role_id", $row['role_id']);
                 $this->sessionManager->setSession("userid", $row['id']);
+                $this->sessionManager->setSession("fname", $row['firstname']);
+                $this->sessionManager->setSession("lname", $row['lastname']);
+                $this->sessionManager->setSession("uname", $row['username']);
+                $this->sessionManager->setSession("email", $row['email']);
+                $this->sessionManager->setSession("role_id", $row['role_id']);
+
+                $this->sql = "SELECT * FROM administrateur WHERE user_id = :user_id;";
+                $stmt = $this->connexion()->prepare($this->sql);
+                $user_id = $this->sessionManager->getSession("userid");
+                $stmt->bindParam(":user_id", $user_id, PDO::PARAM_INT);
+                $stmt->execute();
+                $result = $stmt->fetch();
+
+                if(!empty($result)) {
+                    $this->sessionManager->setSession("isAdmin", true);
+                } else {
+                    $this->sessionManager->setSession("isAdmin", false);
+                }
                 return true;
             } else {
                 return false;
